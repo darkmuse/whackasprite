@@ -8,18 +8,21 @@ import os
 
 class DukeSprite(pygame.sprite.DirtySprite):
     _images = None
+    master_height=0
     
-    def __init__(self, location, fps = 10):
+    def __init__(self, location, layer = 1, fps = 10):
         pygame.sprite.DirtySprite.__init__(self)
+        self._layer = layer
+        self.master_height=0
         if DukeSprite._images is None:
             # This is the first time this class has been instantiated.
             # So, load the image for this and all subsequence instances.
             DukeSprite._images = []
             master_image = pygame.image.load(os.path.join('images', 'duke_spritesheet.png')).convert_alpha()
             frame_width = 50
-            master_width, master_height = master_image.get_size()
+            master_width, DukeSprite.master_height = master_image.get_size()
             for i in xrange(int(master_width/frame_width)):
-                DukeSprite._images.append(master_image.subsurface((i*frame_width,0,frame_width,master_height)))
+                DukeSprite._images.append(master_image.subsurface((i*frame_width,0,frame_width,DukeSprite.master_height)))
 
         self._images = DukeSprite._images
         # Track the time we started, and the time between updates.
@@ -50,6 +53,8 @@ class DukeSprite(pygame.sprite.DirtySprite):
             self._frame = 1
             self._last_update = pygame.time.get_ticks()
             self.dirty=1
+            #self.image = self._images[self._frame].subsurface((0,0,50,DukeSprite.master_height-10))
+            #self.rect.inflate_ip(0,-10)
 
 
     def clicked(self, position):
